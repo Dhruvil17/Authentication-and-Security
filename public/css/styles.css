@@ -1,0 +1,20 @@
+body {
+  background-color: #e8ecef;
+  margin-top: 8%;
+  font-family: Arial, Verdana, Sans-Serif;
+}
+
+.centered {
+  text-align: center;
+}
+
+a {
+  margin: 1.5%;
+}
+
+.secret-text {
+  text-align: center;
+  font-size: 2rem;
+  color: #fff;
+  background-color: #000;
+}

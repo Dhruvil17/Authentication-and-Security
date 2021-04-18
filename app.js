@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
+const saltRounds = 12;
 
 const app = express();
 
@@ -30,27 +31,25 @@ app.get("/login", function (req, res) {
 });
 
 app.post("/register", function (req, res) {
-  const userEmail = req.body.email;
-  const userPassword = md5(req.body.password);
-  const user = new User({
-    email: userEmail,
-    password: userPassword
-  });
-  user.save(function (err) {
-    if (err)
-    {
-      console.log(err);
-    }
-    else {
-      res.render("secrets");
-    }
+  bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+    const user = new User({
+      email: req.body.email,
+      password: hash
+    });
+    user.save(function (err) {
+      if (err)
+      {
+        console.log(err);
+      }
+      else {
+        res.render("secrets");
+      }
+    });
   });
 });
 
 app.post("/login", function (req, res) {
-  const userEmail = req.body.email;
-  const userPassword = md5(req.body.password);
-  User.findOne({ email: userEmail }, function (err, foundDetails) {
+  User.findOne({ email: req.body.email }, function (err, foundDetails) {
     if (err)
     {
       console.log(err);
@@ -63,14 +62,16 @@ app.post("/login", function (req, res) {
       }
       else
       {
-        if (foundDetails.password === userPassword)
-        {
-          res.render("secrets");
-        }
-        else
-        {
-          res.send("Invalid Username or Password. Please try again!");
-        }
+        bcrypt.compare(req.body.password, foundDetails.password, function (err, result) {
+          if (result === true)
+          {
+            res.render("secrets");
+          }
+          else
+          {
+            res.send("Invalid Username or Password. Please try again!");
+          }
+        });  
       }
     }
   });

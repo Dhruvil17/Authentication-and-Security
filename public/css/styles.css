@@ -8,8 +8,8 @@ body {
   text-align: center;
 }
 
-a {
-  margin: 1.5%;
+.btn-block {
+  width: 100%;
 }
 
 .secret-text {
